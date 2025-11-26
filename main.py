@@ -128,7 +128,7 @@ async def on_message(message):
 	if isinstance(message.channel, discord.DMChannel):
 		await message.channel.send("no, use <#1420433036402491512>", file=discord.File("rule67.gif"))
 		data = {"content": f"User {message.author} ({message.author.id}) DMed: {message.content}"}
-		requests.post("https://discord.com/api/webhooks/1436791941931995237/j5dEZCZ8NnFHXkEzdZhYQARP3MY5RISE0e1dftiahnT95-CCNCgxYuMm1hyBlzIpcYT6", json=data)
+		requests.post("If  you want to know when somebody DM's your bot, you can put a webhook here", json=data)
 	else:
 		await bot.process_commands(message)
         
