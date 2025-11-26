@@ -1,0 +1,6 @@
+put ALL your tokens in here for the scriptblox website, seperate by newlines. to get a token, create an account, open dev tools, go to application (or memory on firefox) and go to "Cookies" and copy authorization
+example:
+eyJ.ry7ewtre7w6rtw7e6rwr.hfy87ewtf7ewyfe7wyfw
+eyJ.fyuer8736r3r643r6r6r3.uruyf378563256
+eyJ.uryf7hr37r6376r632732r2.rf32hr23
+eyJ.uryf4yrt43.ewuyfr78r76r62r32r2
