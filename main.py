@@ -1,6 +1,4 @@
-# I am posting this on github because this tool does NOT work anymore!
-
-from scriptblox_api import *
+from scriptblox_api import Posts, _createRealisticRequest
 from dotenv import load_dotenv
 from os import getenv
 from discord.ext import commands
@@ -17,23 +15,17 @@ session = tls_client.Session(
 	client_identifier=chromeIdentifier,
 	random_tls_extension_order=True,
 	header_order=[
-		"Accept",
-		"Accept-Encoding",
-		"Accept-Language",
-		"Alt-Used",
-		"Connection",
-		"Host",
-		"Priority",
-		"Referer",
-		"Sec-Fetch-Dest",
-		"Sec-Fetch-Mobile",
-		"Sec-Fetch-Mode",
-		"Sec-Fetch-Site",
-		"TE",
-		"User-Agent",
+		"host",
+		"accept-encoding",
+		"referer",
+		"content-length",
+		"origin",
+		"connection",
+		"user-agent",
+		"accept",
 	],
 )
-pro = None # if you got a proxy, set it here
+pro = None#f"http://user-FMrO0UosflBXwC9M-type-residential-session-sbl{randint(1, 15)}-country-US-city-New_York-rotation-15:1KYZxWPzIxWpjgYC@geo.g-w.info:10080"
 
 load_dotenv()
 token = getenv("TOKEN")
@@ -126,9 +118,7 @@ async def on_message(message):
 	if message.author == bot.user:
 		return
 	if isinstance(message.channel, discord.DMChannel):
-		await message.channel.send("no, use <#1420433036402491512>", file=discord.File("rule67.gif"))
-		data = {"content": f"User {message.author} ({message.author.id}) DMed: {message.content}"}
-		requests.post("If  you want to know when somebody DM's your bot, you can put a webhook here", json=data)
+		await message.channel.send("no, use the server", file=discord.File("rule67.gif"))
 	else:
 		await bot.process_commands(message)
         
@@ -202,7 +192,7 @@ async def like(ctx, script, amount, _s=0):
 			json = {
 				"scriptId": id
 			}
-			s = session.post("https://scriptblox.com/api/script/like", headers=headers, json=json)
+			s = _createRealisticRequest("POST", url="https://scriptblox.com/api/script/like", headers=headers, json=json)
 			print("like " + str(s.status_code) + " " + str(used))
 			sleep(3)
 
@@ -251,8 +241,10 @@ async def dislike(ctx, script, amount, _s=0):
 			json = {
 				"scriptId": id
 			}
-			s = session.post("https://scriptblox.com/api/script/dislike", headers=headers, json=json)
-			print("dislike " + str(s.status_code) + " " + str(used))
+			s = _createRealisticRequest("POST", url="https://scriptblox.com/api/script/dislike", headers=headers, json=json)
+			test = _createRealisticRequest("GET", url=f"https://scriptblox.com/api/script/{scriptLink.group(1)}", headers=headers)
+			#if not test.json()['script']['disliked']:
+				#print("unsafe token " + token)
 			sleep(3)
 
 		resultsEmbed = discord.Embed(title=f"Finished disliking {id}", color=0x77FF00)
@@ -363,7 +355,7 @@ async def remove(ctx, mode, link, amount):
 			if used > amount:
 				break
 			try:
-				d = session.delete(f"https://scriptblox.com/api/script/{mode}/{data['script']['_id']}", headers={"authorization": token})
+				d = _createRealisticRequest("DELETE", url=f"https://scriptblox.com/api/script/{mode}/{data['script']['_id']}", headers={"authorization": token})
 				print(d.status_code)
 			except:
 				print("hmm")
@@ -412,7 +404,7 @@ async def follow(ctx, username, amount, _s=0):
 			json = {
 				"userId": id
 			}
-			post = session.post("https://scriptblox.com/api/user/follow", headers=headers, json=json)
+			post = _createRealisticRequest("POST", url="https://scriptblox.com/api/user/follow", headers=headers, json=json)
 			message = post.json()['message']
 			if post.status_code != 200 and (message != f"You're now following {username}" and message != "You're already following this user!" and message != "You cannot follow yourself!"):
 				await ctx.send(f":x: failed to follow ({str(post.status_code)}, {message})")
@@ -473,7 +465,7 @@ async def unfollow(ctx, username, amount, _s=0):
 			json = {
 				"userId": id
 			}
-			post = session.post("https://scriptblox.com/api/user/unfollow", headers=headers, json=json)
+			post = _createRealisticRequest("POST", url="https://scriptblox.com/api/user/unfollow", headers=headers, json=json)
 			message = post.json()['message']
 			if post.status_code != 200 and (message != f"Unfollowed user {username}" and message != "Follow the user first!" and message != "You cannot follow yourself!"):
 				await ctx.send(f":x: failed to unfollow ({str(post.status_code)}, {message})")
@@ -535,7 +527,7 @@ async def comment(ctx, script, amount, _s=0):
 				"scriptId": id,
 				"text": choice(possible)
 			}
-			s = session.post("https://scriptblox.com/api/comment/add", headers=headers, json=json)
+			s = _createRealisticRequest("POST", url="https://scriptblox.com/api/comment/add", headers=headers, json=json)
 			print("comment " + str(s.status_code) + " " + str(used))
 			sleep(3)
 
@@ -582,7 +574,7 @@ async def names(ctx):
 @bot.command(brief="Tells you which scriptblox admins are online")
 async def mods(ctx):
 	await ctx.send("checking mod activity")
-	modders = ["Hypernova", "ThunderMods", "galitsacheatertg", "Omsin", "Depso", "wyvern", "SoniSins", "batusd3009", "Arcturus", "Rauwo"]
+	modders = ["Hypernova", "ThunderMods", "galitsacheatertg", "Omsin", "wyvern", "SoniSins", "batusd3009", "Arcturus", "Rauwo"]
 	for m in modders:
 		r = session.get("https://scriptblox.com/api/user/info/" + m).json()
 		if r['user']['status'] != "offline":
